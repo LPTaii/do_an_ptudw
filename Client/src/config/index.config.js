@@ -1,6 +1,6 @@
 const config = {
   API_URL: 'http://127.0.0.1:3000',
-  ROOT_DIR: 'C:\Users\Admin\Downloads\ProJectCT449\Client'
+  ROOT_DIR: 'D:\do_an_ptudw\Client'
 }
 export const OrderStatus = Object.freeze({
   ALL: ({

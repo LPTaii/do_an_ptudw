@@ -3,6 +3,7 @@ import Pills from '@/components/pills.vue';
 
 export default {
   name: "HomeView",
+  
   components: {
     Pills,
   },
@@ -53,9 +54,9 @@ export default {
         <h4>SẢN PHẨM TIÊU BIỂU</h4>
         <router-link to=""></router-link>
       </div>
-      <div class="section-body products-list">
+      <div   class="section-body products-list">
 
-        <div class="product" @click="clickProduct" v-for="product in products" :data-pid="product._id">
+        <div  class="product" @click="clickProduct" v-for="product in products" :data-pid="product._id">
           <div class="product-item-img">
             <img
               :src="productImages[product._id].length > 0 ? productImages[product._id][0].publicPath : (origin + '/noimage.png')"

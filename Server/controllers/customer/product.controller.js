@@ -54,3 +54,41 @@ export const get = async function (req, res) {
     });
   }
 }
+export const search = async function (req, res) {
+  const keyword = req.query.keyword;
+  if(keyword){
+    try {
+      var find_product_by_name = await ProductModel.find({
+        name: { "$regex": keyword, "$options": "i" },
+      });
+      if (find_product_by_name) {
+        find_product_by_name.map(async (product) => {
+          const image = await ProductImageModel.findOne({
+            productId: product._id
+          });
+          return {
+            ...product,
+            image
+          };
+        });
+      }
+      else {
+        return res.status(204).json({
+          products: [],
+        });
+      }
+      return res.status(200).json({
+        products: find_product_by_name,
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        message: error.message,
+      });
+    }
+  } else {
+    return res.status(204).json({
+      products: [],
+    });
+  }
+}

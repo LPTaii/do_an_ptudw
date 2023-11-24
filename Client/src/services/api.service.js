@@ -23,6 +23,28 @@ class ApiService {
         }
       });
   }
+  async searchProduct(keyword) {
+    return await axios
+      .get(API_URL + '/c/product/search',
+        {
+          params: { keyword },
+        }
+      )
+      .then(response => {
+        console.log(response.data);
+        return {
+          data: response.data 
+        };
+      })
+      .catch(err => {
+        console.log(err.message);
+        return {
+          data: {
+            products:[]
+          }
+        }
+      });
+  }
   async getRecommendedProducts() {
     return await axios
       .get(API_URL + '/c/product/getrecommended')
@@ -93,7 +115,7 @@ class ApiService {
         });
     })
   }
-  async getProductEdit(id) {
+    async getProductEdit(id) {
     return await axios
       .get(API_URL + '/m/product/get/' + id, { headers: { ...authHeaderE() } })
       .then(response => {
@@ -111,7 +133,7 @@ class ApiService {
       });
 
   }
-  async getProductEditImages(id) {
+async getProductEditImages(id) {
     return await axios
       .get(API_URL + '/m/product/getimages/' + id, { headers: { ...authHeaderE() } })
       .then(response => {
@@ -229,7 +251,7 @@ class ApiService {
           const data = response;
           resolve(data)
         })
-        .catch(error => {
+.catch(error => {
           console.log(error);
           reject(error);
         });

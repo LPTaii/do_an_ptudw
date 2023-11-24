@@ -21,6 +21,15 @@ const actions = {
         .catch(err => rej(err));
     })
   },
+  searchProduct({ }, keyword) {
+    return new Promise((res, rej) => {
+      apiService.searchProduct(keyword)
+        .then((response) => {
+          res(response.data)
+        })
+        .catch(err => rej(err));
+    })
+  },
   getProductItems({ commit }) {
     apiService.getAllProducts().then((response) => {
       commit('UPDATE_PRODUCT_ITEMS', response.data.data)
