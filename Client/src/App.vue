@@ -130,9 +130,9 @@ export default {
           <font-awesome-icon id="sidebar-toggler" @click="$refs.sidebar.toggle()" :icon="['fas', 'bars']" size="lg"
             v-if="$route.meta.userType === 'ADMIN'" />
           <img @click="$router.push({ name: ($route.meta.userType === 'ADMIN') ? ('AdminHome') : ('CustomerHome') })"
-            id="logo" alt="logo" class="logo" src="@/assets/logo.svg" />
+            id="logo" alt="logo" class="logo" src="@/assets/logo.jpg" />
           <span
-            style="color:var(--primary-color); font-size: larger; font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;" @click="$router.push({ name: ($route.meta.userType === 'ADMIN') ? ('AdminHome') : ('CustomerHome') })">
+            style="color:; font-size: larger; font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;" @click="$router.push({ name: ($route.meta.userType === 'ADMIN') ? ('AdminHome') : ('CustomerHome') })">
             ShopDT
           </span>
         </div>
@@ -201,9 +201,7 @@ export default {
               @updateAuthentication="updateAuthentication"
               @notification="createNotification" 
               @search="search" @updateCart="updateCart" 
-              v-slot="{ Component }"
-              
-              > 
+              v-slot="{ Component }"> 
               
               <Transition name="fade" mode="out-in">
                 <component :is="Component" />
@@ -215,7 +213,7 @@ export default {
       <div id="footer">
         <a class="credit" href="https://github.com/LPTaii">
           <div class="container">
-            <h1><span>LÝ PHÚC TÀI</span></h1>
+            <h1><span>@PTàii</span></h1>
           </div>
         </a>
       </div>
@@ -493,7 +491,7 @@ h1 span {
 
 h1 span:before {
   height: inherit;
-  background: linear-gradient(45deg, #fc5c7d, #6a82fb, #fc5c7d);
+  
   width: 100%;
   display: block;
   position: absolute;

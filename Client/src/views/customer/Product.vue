@@ -147,7 +147,17 @@ export default {
 
   </main>
 </template>
+<style>
+h3{
+  
+  font-family: Arial, Helvetica, sans-serif;
+}
+h2{
+  font-family: Arial, Helvetica, sans-serif;
+  
+}
 
+</style>
 <style scoped>
 img {
   aspect-ratio: 1;
@@ -198,7 +208,7 @@ main>* {
 .price {
   margin-block: 0.5rem;
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-  color: red;
+  color: #d0021c;
 }
 
 

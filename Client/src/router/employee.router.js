@@ -11,7 +11,7 @@ export default [
         path: '',
         name: 'AdminHome',
         meta: {
-          title: 'Hi ADMIN',
+          title: 'ADMIN',
           sidebarIcon: 'house',
           showInSidebar: 'ADMIN',
           requiresAuth: true,

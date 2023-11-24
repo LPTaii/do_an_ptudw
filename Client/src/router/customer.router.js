@@ -6,7 +6,7 @@ export default [
         path: '',
         name: 'CustomerHome',
         meta: {
-          title: 'ShopDT',
+          title: 'Trang chủ',
           userType: 'CUSTOMER'
         },
         component: () => import('@/views/customer/HomeView.vue'),

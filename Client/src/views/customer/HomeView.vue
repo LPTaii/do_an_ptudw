@@ -44,14 +44,20 @@ export default {
   }
 }
 </script>
+<style>
+h4{
+  font-size: 14px;
+  font-family: Arial, Helvetica, sans-serif;
+}
 
+</style>
 <template>
   <main>
     <Pills :pills="tags" @clickPill="clickPill" />
    
     <div class="section">
       <div class="section-title">
-        <h4>SẢN PHẨM TIÊU BIỂU</h4>
+        <h2>SẢN PHẨM TIÊU BIỂU</h2>
         <router-link to=""></router-link>
       </div>
       <div   class="section-body products-list">
@@ -170,9 +176,9 @@ main>* {
     }
 
     &>.price {
-      font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+      font-family: Arial, Helvetica, sans-serif ;
       font-size: 1.2em;
-      color: red;
+      color: #d0021c;
 
     }
 

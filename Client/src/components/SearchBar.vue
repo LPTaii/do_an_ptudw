@@ -63,7 +63,24 @@ export default {
 };
 </script>
 <style>
-
+h5{
+    font-size: 14px;
+  font-family: Arial, Helvetica, sans-serif;
+  }
+h5:hover{
+  transform: scale(1.05);
+  
+  
+}
+input#search{
+  margin-right: 400px;
+  
+}
+div#search-results {
+  width: 120px;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
 </style>
 <template>
   <div class="search-wrapper">
@@ -103,10 +120,7 @@ export default {
     transition: all 250ms ease-in-out;
     backface-visibility: hidden;
     transform-style: preserve-3d;
-    -webkit-transition: (transform, padding) .5s ease-in-out;
-    -moz-transition: (transform, padding) .5s ease-in-out;
-    -ms-transition: (transform, padding) .5s ease-in-out;
-    -o-transition: (transform, padding) .5s ease-in-out;
+    
   }
 
   #search::placeholder {
@@ -123,8 +137,8 @@ export default {
     border-radius: 4px;
   }
   #search+.search-drop-down{
-    background-color: rgba(255, 255, 255, 0.397);
-    box-shadow: 0 0 5px #e90808;
+    background-color: rgb(255, 255, 255);
+    box-shadow: 0 0 5px #e6caca;
   }
   #search:has(+.search-drop-down){
     border-bottom-left-radius: 4px;
@@ -137,5 +151,6 @@ export default {
     width: inherit;
     
   }
+  
  
 </style>
