@@ -4,38 +4,44 @@ import InputTypeNumber from '@/components/InputTypeNumber.vue';
 
 export default {
   name: "Cart",
-  props: {
+  props: { // Định nghĩa các thuộc tính mà component này nhận từ component cha. Trong trường hợp này, nó chỉ nhận một thuộc tính là t với kiểu Number.
     t: Number
   },
-  data() {
+  data() { // Định nghĩa trạng thái ban đầu của component. Trong trường hợp này, nó có hai trạng thái là cartItems (một mảng rỗng)
+    // và origin (được đặt thành location.origin).
     return {
       cartItems: [],
       origin: location.origin
     };
   },
-  methods: {
-    update() {
+  methods: { // Định nghĩa các phương thức mà component này sử dụng. Có rất nhiều phương thức được định nghĩa ở đây,
+    //bao gồm update, showModalHandler, hideModalHandler, checkOutHandler, toPrice, removeAllCartItems, removeCartItem, và cartChangedHandler.
+    update() { // Phương thức này được gọi để cập nhật giỏ hàng. Nếu người dùng hiện tại tồn tại,
+//nó sẽ gửi một action đến Vuex store để thiết lập người dùng cho giỏ hàng. Sau đó, nó sẽ lấy các mục giỏ hàng từ Vuex store
+//và cập nhật trạng thái cartItems của component.
       if (this.currentUserC) {
         this.$store.dispatch("cart/setUser", this.currentUserC._id)
       }
       this.$store.dispatch("cart/getCartItems");
       this.cartItems = this.$store.getters['cart/cartItems'];
     },
-    showModalHandler() {
+    showModalHandler() {// Phương thức này được gọi để hiển thị modal giỏ hàng.
       this.$refs.cartModal.show();
     },
-    hideModalHandler() {
+    hideModalHandler() {//Phương thức này được gọi để ẩn modal giỏ hàng.
       this.$refs.cartModal.hide();
     },
-    checkOutHandler() {
+    checkOutHandler() {//Phương thức này được gọi khi người dùng nhấp vào nút “Đặt hàng”. 
+//Nó sẽ ẩn modal giỏ hàng và chuyển hướng người dùng đến trang “CustomerCheckout”.
       this.$refs.cartModal.hide();
       this.$router.push({ name: "CustomerCheckout" })
     },
-    toPrice(v = 0) {
+    toPrice(v = 0) { //Phương thức này chuyển đổi một số thành định dạng tiền tệ Việt Nam (VND).
       const result = parseInt(v).toLocaleString('vi', { style: 'currency', currency: 'VND' });
       return result;
     },
-    removeAllCartItems() {
+    removeAllCartItems() {//Phương thức này được gọi khi người dùng muốn xóa tất cả các mục trong giỏ hàng. 
+//Nó sẽ hiển thị một hộp thoại xác nhận, và nếu người dùng đồng ý, nó sẽ gửi một action đến Vuex store để xóa tất cả các mục giỏ hàng.
       if (window.confirm("Bạn chắc chằn muốn xóa!")) {
         this.$store.dispatch('cart/removeAllCartItems');
         this.$emit('notification', {
@@ -46,7 +52,8 @@ export default {
 
       }
     },
-    removeCartItem($event) {
+    removeCartItem($event) { //Phương thức này được gọi khi người dùng muốn xóa một mục cụ thể khỏi giỏ hàng. 
+//Nó sẽ lấy id sản phẩm từ sự kiện, gửi một action đến Vuex store để xóa mục giỏ hàng, và sau đó cập nhật giỏ hàng
       this.$emit('notification', {
         message: "",
         type: "success"
@@ -58,30 +65,49 @@ export default {
       this.$forceUpdate();
       this.update()
     },
-    cartChangedHandler(payload) {
+    cartChangedHandler(payload) { //Phương thức này được gọi khi số lượng một mục trong giỏ hàng thay đổi. 
+//Nó sẽ gửi một action đến Vuex store để cập nhật số lượng của mục giỏ hàng, và sau đó cập nhật giỏ hàng.
       this.$store.dispatch('cart/updateQuantity', { index: payload.params.index, newQuantity: payload.value })
       this.update()
     }
   },
-  computed: {
-    currentUserC() {
+  computed: { //Định nghĩa các thuộc tính được tính toán dựa trên trạng thái hiện tại của component.
+    // Trong trường hợp này, có hai thuộc tính được tính toán là currentUserC và cartQuantity.
+    currentUserC() { //Đây là một thuộc tính được tính toán trả về người dùng hiện tại từ Vuex store.
       return this.$store.state.userC.user;
     },
-    cartQuantity() {
+    cartQuantity() { //Đây là một thuộc tính được tính toán trả về tổng số lượng mục trong giỏ hàng từ Vuex store.
       return this.$store.getters["cart/cartQuantity"]
     },
 
   },
-  watch: {
+  watch: { //Theo dõi sự thay đổi của các thuộc tính hoặc trạng thái và thực hiện hành động khi chúng thay đổi.
+    // Trong trường hợp này, nó theo dõi sự thay đổi của thuộc tính t và gọi phương thức update khi nó thay đổi.
     t() {
       this.update();
     }
   },
-  created() {
+  created() {// Một hook vòng đời của Vue.js, được gọi ngay sau khi một instance Vue được tạo. Trong trường hợp này, nó gọi phương thức update.
     this.update();
   },
-  components: { CartModal, InputTypeNumber }
+  components: { CartModal, InputTypeNumber } // Định nghĩa các component con được sử dụng trong component này. 
+  //Trong trường hợp này, nó sử dụng hai component con là CartModal và InputTypeNumber.
 }
+//div class="menu": Đây là thẻ div chính chứa toàn bộ nội dung của component.
+
+//@click="showModalHandler": Khi người dùng nhấp vào thẻ div này, hàm showModalHandler sẽ được gọi.
+
+//Teleport to="body": Teleport là một tính năng của Vue.js cho phép bạn di chuyển một phần nội dung HTML tới một nơi khác trên trang.
+
+//CartModal: Đây là một component con được sử dụng trong template này. Nó có các slot tùy chỉnh cho header, body và footer.
+
+//v-for="(item, index) in cartItems": Đây là một vòng lặp Vue.js, tạo ra một hàng trong bảng cho mỗi mục trong cartItems.
+
+//@click.self="removeCartItem": Khi người dùng nhấp vào nút này, hàm removeCartItem sẽ được gọi.
+
+//v-if="cartItems?.length > 0": Điều kiện này kiểm tra xem cartItems có phần tử nào không. 
+//Nếu có, nó sẽ hiển thị bảng giỏ hàng. Nếu không, nó sẽ hiển thị hình ảnh giỏ hàng trống.
+
 </script>
 <template>
   <div class="menu">

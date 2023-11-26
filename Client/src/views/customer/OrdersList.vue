@@ -5,10 +5,11 @@ import { ref } from 'vue';
 
 export default {
   name: "OrderListCustomer",
-  components: {
+  components: { //Định nghĩa các component con được sử dụng trong component này. Trong trường hợp này, nó sử dụng một component con là Modal.
     Modal
   },
-  data() {
+  data() { //Định nghĩa trạng thái ban đầu của component. 
+//Trong trường hợp này, nó có nhiều trạng thái như origin, listQueries, currentOrdersList, currentOrderDetail, và showModal.
 
     return {
       origin: location.origin,
@@ -18,12 +19,19 @@ export default {
       showModal: false
     }
   },
-  methods: {
-    async getTab(e) {
+  methods: { //Định nghĩa các phương thức mà component này sử dụng. 
+//Có nhiều phương thức được định nghĩa ở đây, bao gồm getTab, getDetail, toLabelStatus, toPrice, và requestCancelOrder.
+    async getTab(e) { //Phương thức này nhận vào một đối tượng sự kiện hoặc một chuỗi, xác định tab hiện tại dựa trên loại đầu vào, 
+//sau đó lấy danh sách đơn hàng tương ứng với tab đó từ Vuex store. Nếu có lỗi xảy ra trong quá trình lấy dữ liệu, 
+//nó sẽ phát ra một thông báo lỗi.
       let tabName = ""
       switch (typeof (e)) {
         case 'object':
-          const siblings = e.target.parentNode.querySelectorAll(e.target.localName)
+          const siblings = e.target.parentNode.querySelectorAll(e.target.localName)// Nếu e là một đối tượng (tức là một sự kiện), 
+//nó sẽ xóa class ‘active’ khỏi tất cả các phần tử anh em của phần tử mục tiêu, thêm class ‘active’ vào phần tử mục tiêu,
+//và lấy giá trị của thuộc tính ‘data-tab’ của phần tử mục tiêu.
+//Nếu e là một chuỗi, nó sẽ chuyển chuỗi thành chữ thường.
+
           siblings.forEach(element => {
             element.classList.remove('active');
           });
@@ -35,10 +43,12 @@ export default {
           tabName = (e).toLowerCase();
           break;
       }
-      const desiredTab = this.listQueries.find(item => (item.name == tabName));
+      const desiredTab = this.listQueries.find(item => (item.name == tabName));// Sau khi xác định tabName, nó tìm tab mong muốn trong listQueries dựa trên name.
+//Sau đó, nó gửi một yêu cầu đến Vuex store để lấy danh sách đơn hàng tương ứng với truy vấn của tab mong muốn.
       await this.$store.dispatch('order/getorderlist', desiredTab.query)
         .then((res) => {
-          this.currentOrdersList = (res.data);
+          this.currentOrdersList = (res.data);//Nếu yêu cầu thành công, nó sẽ cập nhật currentOrdersList với dữ liệu trả về. 
+//Nếu có lỗi xảy ra trong quá trình lấy dữ liệu, nó sẽ phát ra một thông báo lỗi.
         })
         .catch(err => {
           this.$emit('notification', {
@@ -48,43 +58,84 @@ export default {
         })
 
     },
-    getDetail(e) {
+    getDetail(e) { //Phương thức này nhận vào một đối tượng sự kiện, 
+//lấy chi tiết đơn hàng tương ứng với chỉ số được chỉ định trong đối tượng sự kiện, sau đó hiển thị modal chi tiết đơn hàng.
       this.currentOrderDetail = (this.currentOrdersList[e.currentTarget.getAttribute('data-index')]);
       this.$refs.detailModal.show()
     },
-    toLabelStatus(str) {
+    toLabelStatus(str) { //Phương thức này nhận vào một chuỗi, tìm kiếm trạng thái đơn hàng tương ứng trong listQueries, 
+//và trả về trạng thái đơn hàng.
       return this.listQueries.find(el => (el.query.status === str)).status
     },
-    toPrice(value = "") {
+    toPrice(value = "") { //Phương thức này nhận vào một giá trị (mặc định là chuỗi rỗng), 
+//chuyển đổi giá trị đó thành định dạng tiền tệ Việt Nam (VND).
       return value.toLocaleString('vi', { style: 'currency', currency: 'VND' });
     },
-    requestCancelOrder() {
-      this.$refs.detailModal.hide();
-      this.$refs.confirmCancel.hide();
+    requestCancelOrder() { // Phương thức này được gọi khi người dùng muốn hủy một đơn hàng. Nó sẽ ẩn modal chi tiết đơn hàng 
+//và modal xác nhận hủy, sau đó gửi một yêu cầu đến Vuex store để hủy đơn hàng. Nếu yêu cầu thành công, nó sẽ phát ra một thông báo thành công.
+//Nếu có lỗi xảy ra, nó sẽ phát ra một thông báo lỗi.
+      this.$refs.detailModal.hide();//Khi người dùng nhấp vào nút này, nó sẽ hiển thị modal xác nhận hủy.
+      this.$refs.confirmCancel.hide();//Khi người dùng nhấp vào nút này, nó sẽ ẩn modal chi tiết đơn hàng.
       console.log("about to cancel order:" + this.currentOrderDetail._id);
-      this.$store.dispatch('order/cancelOrder', {
+      this.$store.dispatch('order/cancelOrder', {//Gửi một yêu cầu đến Vuex store để hủy đơn hàng
         orderId: this.currentOrderDetail._id
       }).then(res => {
-        this.$emit('notification', {
+        this.$emit('notification', { //Nếu yêu cầu thành công (promise được giải quyết), nó sẽ phát ra một thông báo thành công
           message: res.message,
           type: "success"
         })
       })
         .catch(res => {
-          this.$emit('notification', {
+          this.$emit('notification', { //Nếu có lỗi xảy ra (promise bị từ chối), nó sẽ phát ra một thông báo lỗi
             message: res.message,
             type: 'error'
           })
         })
     },
   },
-  created() {
+  created() { //Một hook vòng đời của Vue.js, được gọi ngay sau khi một instance Vue được tạo. 
+//Trong trường hợp này, nó khởi tạo listQueries với các trạng thái đơn hàng từ OrderStatus.
     this.listQueries = ref([]);
     Object.keys(OrderStatus).forEach((os, index) => {
       this.listQueries.push(OrderStatus[os])
     });
   }
 }
+//div class="menu": Đây là thẻ div chính chứa toàn bộ nội dung của component.
+
+//v-for="item in listQueries": Đây là một vòng lặp Vue.js, tạo ra một nút cho mỗi mục trong listQueries. 
+//Khi nút này được nhấp, nó sẽ gọi phương thức getTab.
+
+//v-for="(item, index) in currentOrdersList": Đây là một vòng lặp Vue.js khác, tạo ra một thẻ div cho mỗi mục trong currentOrdersList. 
+//Mỗi div này chứa thông tin về một đơn hàng.
+
+//@click="getDetail": Khi người dùng nhấp vào nút này, hàm getDetail sẽ được gọi.
+
+//v-if="currentOrdersList.length <= 0": Điều kiện này kiểm tra xem currentOrdersList có phần tử nào không.
+//Nếu không, nó sẽ hiển thị hình ảnh và tiêu đề cho người dùng biết rằng không có đơn hàng nào.
+
+//Teleport to="body": Teleport là một tính năng của Vue.js cho phép bạn di chuyển một phần nội dung HTML tới một nơi khác trên trang.
+
+//Modal width="800px" ref="detailModal": Đây là một component con được sử dụng trong template này. Nó có các slot tùy chỉnh cho header, 
+//body và footer.
+
+//v-for="orderItem in currentOrderDetail.list": Đây là một vòng lặp Vue.js, tạo ra một hàng trong bảng cho mỗi mục trong currentOrderDetail.list.
+
+//@click="$refs.confirmC: Khi người dùng nhấp vào nút này, nó sẽ gọi một phương thức hoặc thực hiện một hành động nào đó được định nghĩa trong
+//component (phần mã này bị cắt nên tôi không thể xác định chính xác nó sẽ làm gì).
+
+//template #footer: Đây là một slot tùy chỉnh cho phần footer của component Modal. Nó chứa hai nút: một để hiển thị modal xác nhận hủy
+//và một để ẩn modal chi tiết đơn hàng.
+
+//button @click="$refs.confirmCancel.show()": Khi người dùng nhấp vào nút này, nó sẽ hiển thị modal xác nhận hủy.
+
+//button @click="$refs.detailModal.hide()": Khi người dùng nhấp vào nút này, nó sẽ ẩn modal chi tiết đơn hàng.
+
+//Modal ref="confirmCancel": Đây là một component con được sử dụng trong template này. Nó có các slot tùy chỉnh cho body và footer.
+
+//button @click="requestCancelOrder": Khi người dùng nhấp vào nút này, nó sẽ gọi phương thức requestCancelOrder để hủy đơn hàng.
+
+//button @click="$refs.confirmCancel.hide()": Khi người dùng nhấp vào nút này, nó sẽ ẩn modal xác nhận hủy.
 </script>
 
 <template>

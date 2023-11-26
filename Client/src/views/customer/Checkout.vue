@@ -13,7 +13,8 @@ export default {
     InputTypeNumber,
     InputTypeSelect
   },
-  data() {
+  data() { //Định nghĩa trạng thái ban đầu của component. Trong trường hợp này, nó có nhiều trạng thái như
+//id, cart, paymentMethods, paymentMethod, origin, và schema.
     const schema = yup.object().shape({
       receiverName: yup.string().required("Vui lòng nhập tên!"),
       receiverPhone: yup.string().required("Vui lòng nhập SĐT!"),
@@ -24,19 +25,23 @@ export default {
       message: yup.string(),
     });
     return {
-      id: "",
-      cart: [],
-      paymentMethods: [{
+      id: "", //Một chuỗi rỗng, có thể được sử dụng để lưu trữ ID của một đối tượng nào đó.
+      cart: [], //Một mảng rỗng, có thể được sử dụng để lưu trữ các mục trong giỏ hàng.
+      paymentMethods: [{ //Một mảng chứa các phương thức thanh toán. Hiện tại, nó chỉ có một phương thức là “Thanh toán khi giao hàng”
         label: "Thanh toán khi giao hàng",
         value: "CASH_ON_DELIVERY",
       },],
-      paymentMethod: null,
-      origin: location.origin,
-      schema
+      paymentMethod: null, //Một giá trị null, có thể được sử dụng để lưu trữ phương thức thanh toán được chọn
+      origin: location.origin, //Địa chỉ gốc của trang web hiện tại.
+      schema //Một đối tượng Yup được sử dụng để xác nhận dữ liệu. Nó định nghĩa các quy tắc xác nhận cho các trường như
+// receiverName, receiverPhone, receiverAddress, paymentMethod, shippingFee, subTotal, và message
     }
   },
-  methods: {
-    async fetchProduct(id) {
+  methods: { //Định nghĩa các phương thức mà component này sử dụng. Có nhiều phương thức được định nghĩa ở đây,
+//bao gồm fetchProduct, toPrice, changePaymentMethod, và submitHandler.
+    async fetchProduct(id) { //Phương thức này nhận vào một ID sản phẩm, sau đó gửi một yêu cầu đến Vuex store để lấy thông tin về sản phẩm đó. 
+//Nếu yêu cầu thành công, nó sẽ cập nhật product và productImages với dữ liệu trả về. Nếu có lỗi xảy ra, nó sẽ phát ra một thông báo lỗi.
+
       this.$refs.inputQuantity.reset();
       try {
         this.$store.dispatch('product/getProduct', id)
@@ -52,15 +57,18 @@ export default {
         this.$emit('notification', { message: err.message, type: 'error' });
       }
     },
-    toPrice(value = "") {
+    toPrice(value = "") { //: Phương thức này nhận vào một giá trị (mặc định là chuỗi rỗng), chuyển đổi giá trị đó thành định dạng tiền tệ Việt Nam (VND).
       return value.toLocaleString('vi', { style: 'currency', currency: 'VND' });
     },
-    changePaymentMethod(newMethod) {
+    changePaymentMethod(newMethod) { //Phương thức này nhận vào một phương thức thanh toán mới, cập nhật paymentMethod với phương thức mới, 
+//sau đó cập nhật giá trị của input phương thức thanh toán và phát ra một sự kiện thay đổi.
       this.paymentMethod = newMethod;
       this.$refs.paymentMethodInput.$el.value = newMethod?.value || "";
       this.$refs.paymentMethodInput.$el.dispatchEvent(new Event('change'));
     },
-    async submitHandler(order) {
+    async submitHandler(order) { //Phương thức này nhận vào một đối tượng đơn hàng, sau đó gửi một yêu cầu đến Vuex store để đặt đơn hàng.
+//Nếu yêu cầu thành công, nó sẽ phát ra một thông báo thành công, xóa tất cả các mục trong giỏ hàng, 
+//và chuyển hướng người dùng đến trang “CustomerOrderSuccess”. Nếu có lỗi xảy ra, nó sẽ phát ra một thông báo lỗi.
       console.log(order.paymentMethod);
       order.list = JSON.parse(JSON.stringify(this.cart))
       console.log(order);
@@ -81,24 +89,40 @@ export default {
         })
     }
   },
-  computed: {
-    cartQuantity() {
+  computed: { //Định nghĩa các thuộc tính được tính toán dựa trên trạng thái hiện tại của component. Trong trường hợp này,
+//có nhiều thuộc tính được tính toán như cartQuantity, cartTotal, currentUserC, và shippingFee.
+    cartQuantity() { //Trả về số lượng mục trong giỏ hàng, được lấy từ Vuex store.
       return this.$store.getters['cart/cartQuantity'];
     },
-    cartTotal() {
+    cartTotal() { //Trả về tổng giá trị của các mục trong giỏ hàng, được lấy từ Vuex store.
       return this.$store.getters['cart/cartTotal'];
     },
-    currentUserC() {
+    currentUserC() { //Trả về thông tin về người dùng hiện tại, được lấy từ trạng thái userC trong Vuex store.
       return this.$store.state.userC.user;
     },
-    shippingFee() {
+    shippingFee() { //Trả về phí vận chuyển, trong trường hợp này là 0.
       return 0;
     }
   },
-  mounted() {
-    this.cart = JSON.parse(localStorage.getItem('cartItems' + this.currentUserC._id));
+  mounted() { //Một hook vòng đời của Vue.js, được gọi ngay sau khi một instance Vue được gắn vào DOM. Trong trường hợp này,
+//nó lấy giỏ hàng từ localStorage.
+    this.cart = JSON.parse(localStorage.getItem('cartItems' + this.currentUserC._id));//để lấy dữ liệu giỏ hàng đã được lưu trữ dưới dạng chuỗi
+//JSON trong localStorage, sau đó chuyển đổi chuỗi JSON này thành một đối tượng JavaScript và gán nó cho this.cart.
   }
 }
+//orm @submit="submitHandler" :validation-schema="schema": Đây là một component Form với sự kiện submit được xử lý bởi phương thức submitHandler và sử dụng schema như là lược đồ xác thực.
+
+//Field type="text" name="receiverName": Đây là một component Field dùng để nhập tên người nhận.
+
+//v-for="cartitem in cart": Đây là một vòng lặp Vue.js, tạo ra một hàng trong bảng cho mỗi mục trong cart.
+
+//div class="section": Đây là một thẻ div chứa một phần của form đặt hàng, bao gồm thông tin về phương thức thanh toán và tổng số tiền.
+
+//InputTypeSelect @changed="changePaymentMethod" :options="paymentMethods": Đây là một component InputTypeSelect với sự kiện changed được xử lý bởi phương thức changePaymentMethod và sử dụng paymentMethods như là các tùy chọn.
+
+//Field name="subTotal" type="hidden" :value="cartTotal": Đây là một component Field dùng để lưu trữ tổng số tiền của các mục trong giỏ hàng. Nó được ẩn đi và không hiển thị cho người dùng.
+
+//button class="block primary" type="submit": Đây là một nút để gửi form. Khi người dùng nhấp vào nút này, form sẽ được gửi đi.
 </script>
 
 <template>
@@ -108,7 +132,7 @@ export default {
       <div class="section header">
         <div class="strip"></div>
         <div class="form-group">
-          <h2 style="display: block; width: 100%; padding: 8px;">GIỎ HÀNG</h2>
+          <h2 style="display: block; width: 100%; padding: 8px;">Đặt hàng</h2>
         </div>
       </div>
       <div class="section">

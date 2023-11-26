@@ -17,7 +17,8 @@ library.add(faCloudArrowUp);
 
 
 export default {
-  components: {
+  components: {//Đây là nơi khai báo các component con sẽ được sử dụng trong component này. Trong trường hợp này, các component con bao gồm 
+//Form, Field, QuillEditor, UploadImage, ErrorMessage, InputTypeFile, UploadImage, và PreviewImages.
     Form,
     Field,
     QuillEditor,
@@ -27,7 +28,8 @@ export default {
     UploadImage,
     PreviewImages
   },
-  data() {
+  data() {//Đây là nơi khai báo các biến sẽ được sử dụng trong component. Trong trường hợp này, các biến được khai báo là title, imagesArr, 
+//thumbnailUrl, thumbnailPreviewSrc, isThumbnailFileSelected, isEditorSaved, isProcessing, và description.
     return {
       title: document.title,
       imagesArr: [],
@@ -39,7 +41,8 @@ export default {
       description: "",
     };
   },
-  setup() {
+  setup() {//Đây là hàm setup trong Composition API của Vue.js. Hàm này được gọi khi component được khởi tạo, trước khi component được gắn vào
+//DOM. Trong trường hợp này, hàm setup trả về một đối tượng chứa modules, một đối tượng cấu hình cho QuillEditor.
     const modules = {
       name: 'htmlEditButton',
       module: QuillHTMLEditButton,
@@ -51,7 +54,7 @@ export default {
     return { modules };
   },
   methods: {
-    async onEditorChangeHandler() {
+    async onEditorChangeHandler() {//Phương thức này sẽ được gọi khi có sự thay đổi trong editor. Nó sẽ cập nhật giá trị của description sau mỗi lần thay đổi.
       const desInp = document.getElementById('description');
       this.isEditorSaved = false;
       var id = window.setTimeout(function () { }, 0);
@@ -66,7 +69,7 @@ export default {
         this.isEditorSaved = true;
       }, 500);
     },
-    async submitHandler(product) {
+    async submitHandler(product) {//Phương thức này sẽ được gọi khi form được submit. Nó sẽ gửi dữ liệu sản phẩm lên server.
       this.isProcessing = true;
 
       await this.$store.dispatch("product/add", product)
@@ -87,26 +90,26 @@ export default {
         );
       this.isProcessing = false;
     },
-    openImageUploadModal() {
+    openImageUploadModal() {//Phương thức này sẽ mở modal để tải lên hình ảnh.
       this.$refs.uploadImageModal.show();
     },
-    addNewImage(newImgData) {
+    addNewImage(newImgData) {//Phương thức này sẽ thêm hình ảnh mới vào mảng imagesArr.
       let tArr = this.imagesArr;
       tArr.push(newImgData)
       this.imagesArr = tArr;
       this.$refs.uploadImageModal.hide();
     },
-    deleteImage(index) {
+    deleteImage(index) {//Phương thức này sẽ xóa hình ảnh khỏi mảng imagesArr dựa trên index.
       let tArr = this.imagesArr;
       tArr.splice(index, 1);
       this.imagesArr = tArr;
     }
   },
-  computed: {
-    currentUser() {
+  computed: {//Đây là nơi khai báo các thuộc tính được tính toán. Các thuộc tính này sẽ được tính lại mỗi khi có sự thay đổi trong các phụ thuộc của chúng.
+    currentUser() {// Thuộc tính này trả về người dùng hiện tại từ Vuex store.
       return this.$store.state.userE.user;
     },
-    schema() {
+    schema() {//Thuộc tính này trả về một schema Yup để xác thực dữ liệu form.
       return yup.object().shape({
         name: yup
           .string()
@@ -127,12 +130,13 @@ export default {
           .string(),
       });
     },
-    isFormSubmittable() {
+    isFormSubmittable() {//Thuộc tính này kiểm tra xem form có thể submit được hay không dựa trên isProcessing và isEditorSaved.
       return (!this.isProcessing && this.isEditorSaved);
     }
   },
-  watch: {
-    imagesArr: {
+  watch: {//Đây là nơi khai báo các watcher. Các watcher này sẽ được gọi mỗi khi có sự thay đổi trong các phụ thuộc của chúng.
+    imagesArr: {//Watcher này sẽ cập nhật giá trị của input images mỗi khi imagesArr thay đổi. Giá trị mới của images sẽ là chuỗi JSON của 
+//imagesArr. Sau khi cập nhật giá trị, một sự kiện change sẽ được phát ra từ input images.
       intermediate: true,
       deep: true,
       handler: function (newImages, oldImages) {
@@ -143,6 +147,37 @@ export default {
     }
   }
 };
+//<main>: Đây là thẻ chính chứa toàn bộ nội dung của component.
+
+//<Form ref="form" @submit="submitHandler" :validation-schema="schema" class="section-wrapper" 
+//v-show="currentUser">: Đây là một component Form với sự kiện submit được xử lý bởi phương thức submitHandler 
+//và schema xác thực được định nghĩa bởi thuộc tính tính toán schema. Component này chỉ hiển thị nếu currentUser
+//có giá trị.
+
+//<Field type="text" ref="name" id="name" placeholder name="name" />: Đây là một component Field dùng để nhập tên
+//sản phẩm.
+
+//<ErrorMessage name="name" />: Đây là một component ErrorMessage dùng để hiển thị lỗi xác thực cho trường tên 
+//sản phẩm.
+
+//<QuillEditor ref="quillEditor" id="quillEditor" theme="snow" toolbar="full" :modules="modules" 
+//v-model:content="description" @textChange="onEditorChangeHandler" />: Đây là một component QuillEditor dùng để
+//nhập mô tả sản phẩm. Mỗi khi nội dung thay đổi, phương thức onEditorChangeHandler sẽ được gọi.
+
+//<button type="button" class="button block" @click="openImageUploadModal">Thêm ảnh</button>: Đây là một nút dùng
+//để mở modal tải lên hình ảnh. Khi người dùng click vào nút này, phương thức openImageUploadModal sẽ được gọi.
+
+//<PreviewImages id="previewImages" :images="imagesArr" @deleteImage="deleteImage" />: Đây là một component 
+//PreviewImages dùng để hiển thị các hình ảnh đã tải lên. Khi người dùng xóa một hình ảnh, phương thức 
+//deleteImage sẽ được gọi.
+
+//<button :disabled="!isFormSubmittable" class="button block">: Đây là một nút với class là button block. 
+//Nút này sẽ bị vô hiệu hóa nếu isFormSubmittable là false. Khi người dùng click vào nút này, form sẽ được 
+//submit.
+
+//<UploadImage title="" ref="uploadImageModal" @submitCroppedImage="addNewImage" :aspectRatio="1" 
+//id="uploadImageModal" />: Đây là một component UploadImage dùng để tải lên hình ảnh. Khi người dùng tải lên
+//một hình ảnh, phương thức addNewImage sẽ được gọi.
 </script>
 
 <template>
@@ -213,7 +248,7 @@ export default {
         </div>
       </Form>
       <div class="section-wrapper" v-show="!currentUser">
-        You need to signin to perform this action
+        
       </div>
       <UploadImage title="" ref="uploadImageModal" @submitCroppedImage="addNewImage" :aspectRatio="1"
         id="uploadImageModal" />

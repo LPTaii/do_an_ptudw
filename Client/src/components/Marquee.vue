@@ -2,6 +2,9 @@
 export default {
   name:"Marquee",
 }
+// <div class="marquee">: Đây là thẻ chứa chính cho tất cả các phần tử khác. Nó có class “marquee” để áp dụng các quy tắc CSS.
+//<p class="marquee-text">: Đây là một đoạn văn bản có class “marquee-text” để áp dụng các quy tắc CSS.
+//<slot></slot>: Đây là một “slot”, nơi mà nội dung từ component cha sẽ được chèn vào. Nếu component cha không cung cấp nội dung cho slot, slot sẽ trống.
 </script>
 
 <template>

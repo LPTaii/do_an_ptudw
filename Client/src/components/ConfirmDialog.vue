@@ -1,7 +1,9 @@
 <script>
-import { ref } from 'vue';
-export default {
-  props: {
+import { ref } from 'vue';//Đây là cách import hàm ref từ thư viện Vue.js. Hàm ref được sử dụng để tạo ra một đối tượng phản ứng, 
+//giúp cho việc theo dõi sự thay đổi của dữ liệu.
+export default {//Đây là cách khai báo một component Vue.js. Component này có các props, data, methods và lifecycle hooks.
+  props: {//Đây là các thuộc tính mà component này nhận từ component cha. Trong trường hợp này, component nhận các props là hidden, id,
+//countdown, và title.
     hidden: {
       type: Boolean
     },
@@ -9,7 +11,8 @@ export default {
     countdown: Number,
     title: String
   },
-  data() {
+  data() {//Đây là nơi khai báo các biến sẽ được sử dụng trong component. Trong trường hợp này, các biến được khai báo là selected,
+//parameters, message, và countdownd.
     return {
       selected: null,
       parameters: ref(null),
@@ -17,11 +20,13 @@ export default {
       countdownd: 0
     }
   },
-  methods: {
-    hide() {
+  methods: {//Đây là nơi khai báo các phương thức sẽ được sử dụng trong component. Trong trường hợp này, các phương thức được khai báo là
+//hide, show, và proceed.
+    hide() { //Phương thức này sẽ ẩn component bằng cách đặt thuộc tính display của phần tử DOM tương ứng với component này thành 'none'.
       this.$el.style.display = 'none';
     },
-    async show(message = null, payload) {
+    async show(message = null, payload) {//Phương thức này sẽ hiển thị component và cập nhật các giá trị parameters và message dựa trên các 
+//tham số đầu vào. Nếu countdown có giá trị, nó sẽ bắt đầu đếm ngược từ countdown đến 0 và cập nhật giá trị countdownd sau mỗi giây.
       this.parameters = payload;
       if (message) {
         this.message = message
@@ -37,15 +42,39 @@ export default {
         }
       }
     },
-    proceed() {
+    proceed() {//Phương thức này sẽ phát sự kiện 'confirmed' với giá trị parameters và sau đó ẩn component. 
+//Sự kiện 'confirmed' có thể được lắng nghe bởi component cha để thực hiện hành động tương ứng khi người dùng xác nhận.
       this.$emit('confirmed', this.parameters)
       this.hide();
     }
   },
-  mounted() {
+  mounted() {//Đây là một lifecycle hook của Vue.js, được gọi sau khi component đã được gắn vào DOM. Trong trường hợp này, 
+//nó được sử dụng để ẩn component ngay sau khi nó được gắn vào DOM.
     this.$el.style.display = 'none';
   }
 }
+//<template>: Đây là thẻ chứa nội dung HTML của component Vue.js.
+
+//<div :id="id" class="modalWrapper">: Đây là một thẻ div với id được bind từ prop id và class là modalWrapper.
+
+//<div class="modalOverlay" @click="hide"></div>: Đây là một thẻ div với class là modalOverlay. Khi người dùng click vào thẻ này, 
+//hàm hide sẽ được gọi.
+
+//<button class="close" @click="hide" type="button">X</button>: Đây là một nút với class là close. Khi người dùng click vào nút này, 
+//hàm hide sẽ được gọi.
+
+//<div class="modal-header" v-if="title">: Đây là một thẻ div với class là modal-header. Thẻ này chỉ hiển thị nếu prop title có giá trị.
+
+//<h3>{{ title }}</h3>: Đây là một thẻ h3 hiển thị giá trị của prop title.
+
+//<div class="modal-body">{{ message }}</div>: Đây là một thẻ div với class là modal-body hiển thị giá trị của biến message.
+
+//<button :disabled="countdown && countdownd > 0" @click="proceed" class="button" type="button">: Đây là một nút với class là button. 
+//Nút này sẽ bị vô hiệu hóa nếu countdown có giá trị và countdownd lớn hơn 0. Khi người dùng click vào nút này, hàm proceed sẽ được gọi.
+
+//Đồng ý {{ countdown ? (${countdownd}) : "" }}: Đây là nội dung hiển thị trên nút. Nếu countdown có giá trị, nó sẽ hiển thị thêm giá trị 
+//của countdownd trong dấu ngoặc đơn. Nếu không, nó chỉ hiển thị “Đồng ý”.
+
 </script>
 
 <template>
@@ -60,7 +89,7 @@ export default {
         {{ message }}
       </div>
       <button :disabled="countdown && countdownd > 0" @click="proceed" class="button" type="button">
-        Confirm {{ countdown ? `(${countdownd})` : "" }}
+        Đồng ý {{ countdown ? `(${countdownd})` : "" }}
       </button>
     </div>
   </div>

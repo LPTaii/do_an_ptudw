@@ -1,16 +1,17 @@
 <script>
 import { reactive, toRefs } from 'vue';
 const { min, max } = Math;
+//định nghĩa cho một component Vue.js có tên là “Gallery”.
 export default {
-  name: "Gallery",
-  props: {
+  name: "Gallery", // Tên của component, trong trường hợp này là “Gallery”.
+  props: { //Đây là các thuộc tính mà component này nhận từ component cha. Có một prop được định nghĩa là “images”.
     images: {
       type: Array,
       required: true
     },
 
   },
-  setup() {
+  setup() { //Đây là một hàm setup trong Composition API của Vue.js. Nó khai báo một biến phản ứng state và một hàm onWheel để xử lý sự kiện cuộn chuột.
     const state = reactive({
       scroller: null,
       scrollLeft: 0,
@@ -26,10 +27,10 @@ export default {
     };
     return { ...toRefs(state), onWheel };
   },
-  data() {
+  data() { // Đây là nơi khai báo dữ liệu nội bộ của component. Có ba biến dữ liệu là “monitor”, “currentImageIndex”, và “origin”.
     const origin = location.origin;
     const currentImageIndex = -1;
-    // console.log(this.$props.images);
+    
     return {
       monitor: this.$props.images.length > 0 ? this.$props.images[currentImageIndex].publicPath : (origin + "noimage.png"),
       currentImageIndex,
@@ -37,32 +38,35 @@ export default {
 
     }
   },
-  methods: {
+  methods: { // Đây là nơi khai báo các phương thức của component. Có hai phương thức là “show” và “showAlternative”.
     show(index) {
-      // console.log("showing: ", index);
       this.currentImageIndex = index;
       if (this.validArray) {
-        // console.log(this.$props.images[index].publicPath);
         this.monitor = this.$props.images[index].publicPath;
       } else { this.showAlternative(); }
     },
     showAlternative() {
-      // console.log("showingAlternative");
       this.monitor = this.origin + "/noimage.png"
     }
   },
-  computed: {
+  computed: { //Đây là nơi khai báo các thuộc tính được tính toán. Có một thuộc tính được tính toán là “validArray”.
     validArray() {
       return this.images.length > 0;
     }
   },
-  watch: {
+  watch: { //Đây là nơi khai báo các watcher, những hàm sẽ được gọi khi một biến dữ liệu thay đổi. Trong trường hợp này, có một watcher cho “images”.
     images(newV, oldV) {
-      // console.log("images changed");
       this.show(0)
     }
   }
 }
+//<div class="gallery">: Đây là thẻ chứa chính cho tất cả các phần tử khác. Nó có class “gallery” để áp dụng các quy tắc CSS.
+//<div class="monitor">: Đây là thẻ chứa cho hình ảnh hiện tại đang được hiển thị. Nó có class “monitor” để áp dụng các quy tắc CSS
+//<img :src="monitor" alt="">: Đây là hình ảnh hiện tại đang được hiển thị. Thuộc tính src của nó được ràng buộc với biến monitor.
+//<div class="gallery-shelf" ref="scroller" :scroll-left.camel="scrollLeft" @wheel.prevent="onWheel">: Đây là thẻ chứa cho danh sách hình ảnh.
+//Nó có class “gallery-shelf” để áp dụng các quy tắc CSS. Nó cũng có một tham chiếu ref tới “scroller”, và một sự kiện wheel để xử lý cuộn chuột.
+//<img v-for="(image, index) in images" :key="index" :src="image.publicPath" @click="show(index)" alt="">: Đây là một danh sách hình ảnh được tạo ra bằng vòng lặp v-for.
+//Mỗi hình ảnh có một thuộc tính src được ràng buộc với image.publicPath, và một sự kiện click để hiển thị hình ảnh đó.
 </script>
 <template>
   <div class="gallery">

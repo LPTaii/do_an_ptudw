@@ -133,7 +133,7 @@ export default {
             id="logo" alt="logo" class="logo" src="@/assets/logo.jpg" />
           <span
             style="color:; font-size: larger; font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;" @click="$router.push({ name: ($route.meta.userType === 'ADMIN') ? ('AdminHome') : ('CustomerHome') })">
-            ShopDT
+            ShopPT
           </span>
         </div>
         <div>
@@ -238,11 +238,11 @@ export default {
 }
 
 #appWrapper.customer-background {
-  background-image: url(@/../shop.jpg);
+  background-color: #0000004b;
 }
 
 #appWrapper.admin-background {
-  background-image: url(@/../admin.jpg);
+  background-color: #0000004b;
 }
 
 #header,

@@ -1,36 +1,54 @@
 <script>
 export default {
-  props: {
+  props: { // Định nghĩa các thuộc tính mà component này nhận từ component cha. 
+//Trong trường hợp này, nó chỉ nhận một thuộc tính là width với kiểu String và giá trị mặc định là "300px".
     width: {
       type: String,
       default: "300px",
     }
   },
-  data() {
+  data() { //Định nghĩa trạng thái ban đầu của component. Trong trường hợp này, nó có một trạng thái là showState (được đặt thành false).
     return {
       showState: false,
     }
   },
-  methods: {
-    refresh() {
+  methods: {// Định nghĩa các phương thức mà component này sử dụng.
+//Có nhiều phương thức được định nghĩa ở đây, bao gồm refresh, show, hide, và toggle.
+    refresh() { //Phương thức này sẽ buộc component cập nhật lại, bất chấp việc không có sự thay đổi nào trong dữ liệu. 
+//Điều này có thể hữu ích khi bạn muốn cập nhật lại giao diện mà không cần thay đổi dữ liệu.
       this.$forceUpdate
     },
-    show() {
+    show() { //Phương thức này sẽ đặt trạng thái showState thành true,
+//có thể được sử dụng để hiển thị một phần tử nào đó trong giao diện (ví dụ: một modal hoặc một thông báo).
       this.showState = true;
     },
-    hide() {
+    hide() { //Phương thức này sẽ đặt trạng thái showState thành false, có thể được sử dụng để ẩn một phần tử nào đó trong giao diện.
       this.showState = false;
     },
-    toggle() {
+    toggle() {//Phương thức này sẽ đảo ngược trạng thái showState (nếu nó đang là true thì sẽ chuyển thành false, 
+//và ngược lại). Điều này hữu ích khi bạn muốn chuyển đổi trạng thái hiển thị của một phần tử nào đó trong giao diện.
       this.showState = !this.showState;
     }
   },
-  watch: {
+  watch: { //Theo dõi sự thay đổi của các thuộc tính hoặc trạng thái và thực hiện hành động khi chúng thay đổi. 
+//Trong trường hợp này, nó theo dõi sự thay đổi của thuộc tính show và cập nhật showState khi nó thay đổi.
     show(foo) {
       this.showState = foo;
     }
   }
 }
+//Transition name="modal": Đây là một component Vue.js cung cấp các hiệu ứng chuyển đổi cho các phần tử hoặc component khi chúng xuất hiện, biến mất, hoặc thay đổi trạng thái.
+
+//v-if="showState": Điều kiện này kiểm tra xem trạng thái showState có đúng hay không. Nếu đúng, nó sẽ hiển thị modal.
+
+//@click.self="$emit('close')": Khi người dùng nhấp vào vùng che phủ modal (nhưng không phải chính modal), nó sẽ phát ra một sự kiện ‘close’.
+
+//:style="{ width }": Đây là một binding style, nó sẽ đặt chiều rộng của modal tương ứng với giá trị của thuộc tính width.
+
+//slot name="header", slot name="body", slot name="footer": Đây là các slot, cho phép bạn chèn nội dung tùy chỉnh vào các phần khác nhau của modal từ component cha.
+
+//button class="modal-default-button" @click="hide": Đây là một nút, khi nhấp vào, nó sẽ gọi phương thức hide để ẩn modal.
+
 </script>
 
 <template>
@@ -38,7 +56,7 @@ export default {
     <div v-if="showState" class="modal-mask" @click.self="$emit('close')">
       <div :style="{ width }" class="modal-container">
         <div class="modal-header">
-          <slot name="header">Untitled</slot>
+          <slot name="header"></slot>
         </div>
 
         <div class="modal-body">

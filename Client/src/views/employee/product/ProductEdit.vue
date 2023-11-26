@@ -19,7 +19,8 @@ import { faCloudArrowUp } from '@fortawesome/free-solid-svg-icons';
 library.add(faCloudArrowUp);
 
 export default {
-  components: {
+  components: {//Đây là nơi khai báo các component con sẽ được sử dụng trong component này. Trong trường hợp này, các component con bao gồm
+//Form, Field, QuillEditor, UploadImage,ErrorMessage, InputTypeFile, UploadImage, PreviewImages, và ConfirmDialog.
     Form,
     Field,
     QuillEditor,
@@ -30,20 +31,21 @@ export default {
     PreviewImages,
     ConfirmDialog
   },
-  async setup() {
+  async setup() {// Đây là hàm setup trong Composition API của Vue.js. Hàm này được gọi khi component được khởi tạo, trước khi component 
+//được gắn vào DOM.
     const p = reactive({
       _id: "",
       roduct: {},
       oldimages: [],
       oldimagesources: []
-    });
-    const route = useRoute();
-    const store = useStore();
+    });// Đây là cách khai báo một đối tượng phản ứng trong Vue.js. Đối tượng này sẽ chứa các thuộc tính _id, roduct, oldimages, và oldimagesources.
+    const route = useRoute();//Đây là cách sử dụng các hook useRoute và useStore từ Vue Router và Vuex.
+    const store = useStore();//Đây là cách sử dụng các hook useRoute và useStore từ Vue Router và Vuex.
     p._id = route.params.id;
 
     await store.dispatch("product/getEdit", {
       id: p._id
-    })
+    })//Đây là cách gọi một action từ Vuex store. Action này sẽ lấy dữ liệu sản phẩm để chỉnh sửa dựa trên id của sản phẩm.
       .then(
         async (product) => {
           p.roduct = product;
@@ -65,7 +67,7 @@ export default {
       );
     await store.dispatch("product/getEditImages", {
       id: p._id
-    })
+    })//Đây là cách gọi một action khác từ Vuex store. Action này sẽ lấy các hình ảnh của sản phẩm để chỉnh sửa dựa trên id của sản phẩm.
       .then(
         async (images) => {
           images.forEach(img => {
@@ -82,15 +84,15 @@ export default {
         }
       );
 
-    const modules = {
+    const modules = { 
       name: 'htmlEditButton',
       module: QuillHTMLEditButton,
       options: {
         debug: true
       },
-    };
+    };//Đây là cách khai báo một module cho Quill Editor.
 
-    return { modules, p };
+    return { modules, p }; //Đây là cách trả về các biến từ hàm setup để sử dụng trong template hoặc các hàm khác của component.
   },
   data() {
     return {
@@ -106,9 +108,14 @@ export default {
       isProcessing: ref(false),
       description: "",
     };
-  },
-  methods: {
-    async onEditorChangeHandler() {
+  },//Đây là nơi khai báo các biến sẽ được sử dụng trong component. Trong trường hợp này, các biến được khai báo là 
+//product, title, imagesArr, oldImagesDocArr, oldImageSourcesArr, thumbnailUrl, thumbnailPreviewSrc, isThumbnailFileSelected, isEditorSaved,
+//isProcessing, và description.
+  methods: {//Đây là nơi khai báo các phương thức sẽ được sử dụng trong component. Trong trường hợp này, các phương thức được khai báo là
+//onEditorChangeHandler, submitHandler, openImageUploadModal, addNewImage, deleteImage, và deleteOldProductImage.
+
+    async onEditorChangeHandler() { //Phương thức này sẽ được gọi khi có sự thay đổi trong editor. Nó sẽ cập nhật giá trị của description 
+//sau mỗi lần thay đổi.
       const desInp = document.getElementById('description');
       this.isEditorSaved = false;
       var id = window.setTimeout(function () { }, 0);
@@ -123,7 +130,7 @@ export default {
         this.isEditorSaved = true;
       }, 500);
     },
-    async submitHandler(product) {
+    async submitHandler(product) {// Phương thức này sẽ được gọi khi form được submit. Nó sẽ gửi dữ liệu sản phẩm đã chỉnh sửa lên server.
       this.isProcessing = true;
       await this.$store.dispatch("product/edit", {
         id: this.p._id,
@@ -148,16 +155,16 @@ export default {
         );
       this.isProcessing = false;
     },
-    openImageUploadModal() {
+    openImageUploadModal() {// Phương thức này sẽ mở modal để tải lên hình ảnh.
       document.getElementById('uploadImageModal').style.display = 'block';
     },
-    addNewImage(newImgData) {
+    addNewImage(newImgData) {// Phương thức này sẽ thêm hình ảnh mới vào mảng imagesArr.
       let tArr = this.imagesArr;
       tArr.push(newImgData)
       this.imagesArr = tArr;
       this.$refs.uploadImageModal.hide();
     },
-    deleteImage(index) {
+    deleteImage(index) {// Phương thức này sẽ xóa hình ảnh khỏi mảng imagesArr hoặc oldImageSourcesArr dựa trên index.
       if (index > this.oldImageSourcesArr.length) {
         let tArr = this.imagesArr;
         tArr.splice(index - this.oldImageSourcesArr.length, 1);
@@ -167,7 +174,8 @@ export default {
         this.$refs.confirmDialog.show("Bạn có chắc chắn muốn xóa?", index)
       }
     },
-    deleteOldProductImage(index) {
+    deleteOldProductImage(index) {// Phương thức này sẽ xóa hình ảnh cũ của sản phẩm khỏi server và cập nhật mảng oldImagesDocArr và 
+//oldImageSourcesArr.
       this.$store.dispatch("product/deleteProductImage", {
         id: this.oldImagesDocArr[index]._id
       })
@@ -187,11 +195,12 @@ export default {
         });
     }
   },
-  computed: {
-    currentUser() {
+  computed: {// Đây là nơi khai báo các thuộc tính được tính toán. Các thuộc tính này sẽ được tính lại mỗi khi có sự thay đổi trong
+//các phụ thuộc của chúng.
+    currentUser() {// Thuộc tính này trả về người dùng hiện tại từ Vuex store.
       return this.$store.state.userE.user;
     },
-    schema() {
+    schema() {// Thuộc tính này trả về một schema Yup để xác thực dữ liệu form.
       return yup.object().shape({
         name: yup
           .string()
@@ -212,12 +221,12 @@ export default {
           .string(),
       });
     },
-    isFormSubmittable() {
+    isFormSubmittable() {// Thuộc tính này kiểm tra xem form có thể submit được hay không dựa trên isProcessing và isEditorSaved.
       return (!this.isProcessing && this.isEditorSaved);
     }
   },
-  watch: {
-    imagesArr: {
+  watch: {//Đây là nơi khai báo các watcher. Các watcher này sẽ được gọi mỗi khi có sự thay đổi trong các phụ thuộc của chúng.
+    imagesArr: {//Watcher này sẽ cập nhật giá trị của input images mỗi khi imagesArr thay đổi.
       intermediate: true,
       deep: true,
       handler: function (newImages, oldImages) {
@@ -226,7 +235,7 @@ export default {
         imagesInput.dispatchEvent(new Event('change'));
       }
     },
-    oldImageSourcesArr: {
+    oldImageSourcesArr: {//Watcher này sẽ cập nhật giá trị của input oldimages mỗi khi oldImageSourcesArr thay đổi.
       intermediate: true,
       deep: true,
       handler: function (newImages) {
@@ -236,12 +245,40 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted() {// Đây là một lifecycle hook của Vue.js, được gọi sau khi component đã được gắn vào DOM. Trong trường hợp này, nó được sử dụng 
+//để dán HTML vào Quill Editor nếu p.roduct.description có giá trị.
     if (this.p.roduct.description) {
       this.$refs.quillEditor.pasteHTML(this.p.roduct.description);
     }
   }
 };
+//<main>: Đây là thẻ chính chứa toàn bộ nội dung của component.
+
+//<Form ref="form" @submit="submitHandler" :validation-schema="schema" class="section-wrapper" v-show="currentUser">: 
+//Đây là một component Form với sự kiện submit được xử lý bởi phương thức submitHandler và schema xác thực được định nghĩa bởi thuộc tính 
+//tính toán schema. Component này chỉ hiển thị nếu currentUser có giá trị.
+
+//<Field type="text" ref="name" id="name" :value="product.name" placeholder="Product A" name="name" />: 
+//Đây là một component Field dùng để nhập tên sản phẩm.
+
+//<ErrorMessage name="name" />: Đây là một component ErrorMessage dùng để hiển thị lỗi xác thực cho trường tên sản phẩm.
+
+//<QuillEditor id="quillEditor" ref="quillEditor" theme="snow" :modules="modules" v-model:content="description" @textChange=
+//"onEditorChangeHandler" />: Đây là một component QuillEditor dùng để nhập mô tả sản phẩm. Mỗi khi nội dung thay đổi, phương thức 
+//onEditorChangeHandler sẽ được gọi.
+
+//<button type="button" class="button" @click="openImageUploadModal">Thêm ảnh</button>: Đây là một nút dùng để mở modal tải lên hình ảnh. 
+//Khi người dùng click vào nút này, phương thức openImageUploadModal sẽ được gọi.
+
+//<PreviewImages id="previewImages" :images="[...oldImageSourcesArr, ...imagesArr]" @deleteImage="deleteImage" />: 
+//Đây là một component PreviewImages dùng để hiển thị các hình ảnh đã tải lên. Khi người dùng xóa một hình ảnh, phương thức deleteImage 
+//sẽ được gọi.
+
+//<ConfirmDialog title="" @confirmed="deleteOldProductImage" :countdown="3" ref="confirmDialog">: Đây là một component ConfirmDialog dùng 
+//để xác nhận việc xóa hình ảnh cũ. Khi người dùng xác nhận, phương thức deleteOldProductImage sẽ được gọi.
+
+//<UploadImage ref="uploadImageModal" @submitCroppedImage="addNewImage" :aspectRatio="1" id="uploadImageModal" />: 
+//Đây là một component UploadImage dùng để tải lên hình ảnh. Khi người dùng tải lên một hình ảnh, phương thức addNewImage sẽ được gọi.
 </script>
 
 <template>

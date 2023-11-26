@@ -1,6 +1,7 @@
 <script>
 import * as yup from "yup";
-import { Form, Field, ErrorMessage } from "vee-validate";
+import { Form, Field, ErrorMessage } from "vee-validate"; // Đây là các câu lệnh import trong JavaScript, 
+//nó đang nhập một thư viện validation có tên là “yup” và ba component Vue.js từ thư viện “vee-validate”.
 
 
 export default {
@@ -9,7 +10,7 @@ export default {
     Form,
     Field,
     ErrorMessage,
-  },
+  },//Đây là định nghĩa các component con được sử dụng trong component này. Trong trường hợp này, có ba component con là “Form”, “Field” và “ErrorMessage”.
   data() {
     const schema = yup.object().shape({
       name: yup
@@ -43,13 +44,15 @@ export default {
       message: "",
       schema,
     };
-  },
+  },//Đây là định nghĩa dữ liệu ban đầu của component. Có bốn thuộc tính được khởi tạo: successful, loading, message và schema. 
+//schema là một đối tượng yup được sử dụng để xác thực dữ liệu form
   computed: {
     loggedIn() {
       return this.$store.state.userC.status.loggedIn;
     },
   },
-  mounted() {
+  mounted() {// Đây là một vòng đời của component Vue.js, được gọi ngay sau khi một instance của component được gắn vào DOM. 
+//Trong trường hợp này, nó kiểm tra xem người dùng đã đăng nhập chưa, nếu đã đăng nhập thì chuyển hướng đến trang đăng nhập.
     if (this.loggedIn) {
       this.$emit('notification', {
         message: "Already signed in",
@@ -59,7 +62,8 @@ export default {
       this.$router.push(this.$route.query.redirect || { name: "CustomerSignin" })
     }
   },
-  methods: {
+  methods: {// Đây là các phương thức được định nghĩa trong component. Các phương thức này có thể được gọi từ template của
+//component hoặc từ các phương thức khác trong component.
     handleRegister(user) {
       this.message = "";
       this.successful = false;

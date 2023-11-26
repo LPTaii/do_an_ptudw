@@ -1,22 +1,25 @@
 <script>
-import Marquee from './Marquee.vue';
+import Marquee from './Marquee.vue';//Đây là cách import component Marquee từ file .vue tương ứng.
 
 const init = {
   filename : "Choose file..."
 }
-export default{
+export default{//Đây là cách khai báo một component Vue.js. Component này có tên là “InputTypeFile” và sử dụng component Marquee.
   name:"InputTypeFile",
   components:{
     Marquee
   },
-  props:['iaccept', 'icapture'],
-  data(){
+  props:['iaccept', 'icapture'],//Đây là các thuộc tính mà component này nhận từ component cha. Trong trường hợp này, component nhận các props 
+//là iaccept và icapture.
+  data(){//Đây là nơi khai báo các biến sẽ được sử dụng trong component. Trong trường hợp này, biến được khai báo là filename.
     return {
       filename: init.filename
     }
   },
-  methods:{
-    fileChangedHandler($event){
+  methods:{//Đây là nơi khai báo các phương thức sẽ được sử dụng trong component. Trong trường hợp này, các phương thức được khai báo là 
+//fileChangedHandler và clearFile.
+    fileChangedHandler($event){//Phương thức này sẽ được gọi khi có sự thay đổi trong input file. Nó sẽ phát sự kiện 'fileSelected' với giá trị
+//của file đã chọn và cập nhật filename với tên của file
       const target = $event.target;
       const file = target.files[0];
       if (target && target.files) {
@@ -24,13 +27,22 @@ export default{
       }
       this.filename = file.name;
     },
-    clearFile($event) {
+    clearFile($event) {//Phương thức này sẽ được gọi khi file đã chọn được xóa. Nó sẽ đặt giá trị của input file thành null, đặt lại filename về
+//giá trị ban đầu, và phát sự kiện 'cleared'.
       $event.target.value = null;
       this.filename = init.filename;
       this.$emit('cleared');
     }
   }
 }
+//<label class="file">: Đây là một thẻ label với class là file.
+
+//<input type="file" :accept="iaccept" :capture="icapture" @click="clearFile($event)" @change="fileChangedHandler($event)">: 
+//Đây là một input file với các thuộc tính accept và capture được bind từ các prop iaccept và icapture. Khi người dùng click vào input này, 
+//hàm clearFile sẽ được gọi. Khi người dùng thay đổi file đã chọn, hàm fileChangedHandler sẽ được gọi.
+
+//<span class="file-custom"><Marquee>{{ filename }}</Marquee></span>: Đây là một thẻ span với class là file-custom và chứa một component Marquee.
+//Component Marquee sẽ hiển thị giá trị của filename dưới dạng chữ chạy.
 </script>
 
 <template>

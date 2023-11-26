@@ -27,55 +27,66 @@ export default {
     }
   },
   methods: {
-    getDetail(e) {
+    getDetail(e) {// Phương thức này sẽ lấy chi tiết đơn hàng dựa trên index của phần tử được click và hiển thị modal chi tiết đơn hàng.
       this.currentOrderDetail = (this.orders[e.currentTarget.getAttribute('data-index')]);
       this.$refs.detailModal.show();
     },
-    showModalHandler() {
+    showModalHandler() {//Các phương thức này sẽ hiển thị và ẩn modal.
       this.showModal = true;
     },
-    hideModalHandler() {
+    hideModalHandler() {//Các phương thức này sẽ hiển thị và ẩn modal.
       this.showModal = false;
     },
-    toPrice(value = "") {
+    toPrice(value = "") {//Phương thức này sẽ chuyển đổi giá trị thành định dạng tiền tệ Việt Nam.
       return value.toLocaleString('vi', { style: 'currency', currency: 'VND' });
     },
-    addFilter(filter) {
+    addFilter(filter) {//Phương thức này sẽ thêm bộ lọc vào filters.
       this.filters = {
         ...this.filters,
         ...filter
       }
     },
-    orderStatusFilter(e) {
-      const siblings = e.target.parentNode.querySelectorAll(e.target.localName)
+    orderStatusFilter(e) {//Phương thức này sẽ thêm bộ lọc trạng thái đơn hàng vào filters dựa trên phần tử được click.
+      const siblings = e.target.parentNode.querySelectorAll(e.target.localName)//Dòng này lấy tất cả các phần tử anh chị em của phần tử được click.
       siblings.forEach(element => {
         element.classList.remove('active');
-      });
-      e.target.classList.add('active');
+      });//Dòng này xóa class active khỏi tất cả các phần tử anh chị em.
+      e.target.classList.add('active');//Dòng này thêm class active vào phần tử được click.
 
-      const q = JSON.parse(e.target.getAttribute('data-query'));
-      this.addFilter({ status: q.status });
-    },
-    searchCustomer(e) {
-      this.userSuggest = [];
+      const q = JSON.parse(e.target.getAttribute('data-query'));//Dòng này lấy giá trị của thuộc tính data-query của phần tử được click và 
+//chuyển đổi nó từ chuỗi JSON thành một đối tượng JavaScript.
+      this.addFilter({ status: q.status });//Dòng này thêm bộ lọc trạng thái đơn hàng vào filters với trạng thái là q.status.
+    },//Vì vậy, khi một phần tử được click, phương thức này sẽ đặt trạng thái của phần tử đó thành active, xóa trạng thái active khỏi tất cả các
+//phần tử khác, và thêm bộ lọc trạng thái đơn hàng vào filters dựa trên trạng thái của phần tử được click. Điều này cho phép bạn lọc các đơn 
+//hàng dựa trên trạng thái của chúng.
+
+    searchCustomer(e) {//Phương thức này sẽ tìm kiếm khách hàng dựa trên giá trị của input và thêm bộ lọc customerId vào filters.
+      this.userSuggest = [];//Dòng này đặt lại mảng userSuggest thành một mảng rỗng.
       if (e.target.value) {
         this.$store.dispatch('order/searchUser', e.target.value)
           .then(res => {
             console.log(res);
             this.userSuggest = res.data;
           })
-      }
-      if (e.target.checkValidity()) {
+      }//Nếu input có giá trị, phương thức này sẽ gửi yêu cầu lên Vuex store để tìm kiếm người dùng với giá trị của input. Kết quả sẽ được gán 
+//cho userSuggest.
+
+      if (e.target.checkValidity()) {//Nếu input hợp lệ, phương thức này sẽ thêm bộ lọc customerId vào filters với customerId là giá trị của 
+//input nếu giá trị đó không phải là chuỗi rỗng. Nếu không, customerId sẽ được đặt thành undefined.
         this.addFilter({ customerId: (e.target.value !== "") ? e.target.value : undefined })
       } else {
         this.addFilter({ customerId: undefined })
       }
-    },
-    getSuggest(e) {
+    },//Vì vậy, khi một người dùng nhập vào input, phương thức này sẽ tìm kiếm khách hàng dựa trên giá trị đó và thêm bộ lọc customerId vào 
+//filters dựa trên giá trị của input. Điều này cho phép bạn lọc các đơn hàng dựa trên khách hàng.
+
+    getSuggest(e) {//Phương thức này sẽ cập nhật giá trị của input gợi ý với id của phần tử được click.
       this.$refs.suggestInput.value = e.target.getAttribute('data-id');
       this.$refs.suggestInput.dispatchEvent(new Event('input'))
     },
-    inputTypeDateChangeHandler(d) {
+    inputTypeDateChangeHandler(d) {//Phương thức này sẽ thêm bộ lọc createdAt vào filters dựa trên giá trị của input ngày. Nếu giá trị là
+//“Invalid Date”, createdAt sẽ được đặt thành undefined. Nếu không, createdAt sẽ được đặt thành một đối tượng với thuộc tính $gt là giá trị của
+//input ngày.
       if (d == "Invalid Date") {
         this.addFilter({ createdAt: undefined })
       } else {
@@ -86,22 +97,27 @@ export default {
         })
       }
     },
-    saveNewOrderStatus(newVal) {
+    saveNewOrderStatus(newVal) {//Phương thức này sẽ lưu trạng thái mới của đơn hàng vào newOrderStatus. 
+//Trạng thái mới này sẽ được lấy từ newVal.query.status.
       this.newOrderStatus = newVal.query.status
     },
-    processOrder() {
-      this.$refs.processOrderModal.hide()
-      this.$refs.detailModal.hide()
-      this.$store.dispatch('order/processOrder', {
+    processOrder() {// Phương thức này sẽ xử lý đơn hàng bằng cách gửi yêu cầu lên server với id của đơn hàng hiện tại và trạng thái mới. 
+//Sau khi xử lý xong, nó sẽ cập nhật lại danh sách đơn hàng và phát sự kiện thông báo.
+      this.$refs.processOrderModal.hide()//Đầu tiên, phương thức này sẽ ẩn modal xử lý đơn hàng và modal chi tiết đơn hàng.
+      this.$refs.detailModal.hide()//Đầu tiên, phương thức này sẽ ẩn modal xử lý đơn hàng và modal chi tiết đơn hàng.
+
+      this.$store.dispatch('order/processOrder', {//Sau đó, nó sẽ gửi yêu cầu lên Vuex store để xử lý đơn hàng với id của đơn hàng hiện tại 
+//(this.currentOrderDetail._id) và trạng thái mới (this.newOrderStatus).
         orderId: this.currentOrderDetail._id,
         newStatus: this.newOrderStatus
-      }).then(res => {
+      }).then(res => {//Nếu yêu cầu thành công, phương thức này sẽ cập nhật lại danh sách đơn hàng bằng cách gọi this.addFilter({}) và phát sự
+//kiện thông báo với thông điệp từ server và loại là ‘success’.
         this.addFilter({});
         this.$emit('notification', {
           message: res.message,
           type: 'success'
         })
-      }).catch(errres => {
+      }).catch(errres => {//Nếu yêu cầu thất bại, phương thức này sẽ phát sự kiện thông báo với thông điệp lỗi từ server và loại là ‘error’.
         this.$emit('notification', {
           message: errres.response.data.message,
           type: 'error'
@@ -109,13 +125,15 @@ export default {
       })
     }
   },
-  computed: {
-    productItems() {
+  computed: {//Đây là nơi khai báo các thuộc tính được tính toán. Các thuộc tính này sẽ được tính lại mỗi khi có sự thay đổi trong các phụ thuộc
+//của chúng.
+    productItems() {//Thuộc tính này trả về một bản sao của productItems từ Vuex store.
       return JSON.parse(JSON.stringify(this.$store.getters['product/productItems']));
     }
   },
-  watch: {
-    async filters(newVal) {
+  watch: {//Đây là nơi khai báo các watcher. Các watcher này sẽ được gọi mỗi khi có sự thay đổi trong các phụ thuộc của chúng.
+    async filters(newVal) {//Đây là watcher cho thuộc tính filters. Mỗi khi filters thay đổi, hàm getorderlistadmin từ Vuex store sẽ được gọi với
+//newVal (giá trị mới của filters) làm tham số. Kết quả sẽ được gán cho orders, cập nhật danh sách các đơn hàng hiển thị cho người dùng.
       console.log(newVal);
       this.orders = [];
       this.$store.dispatch('order/getorderlistadmin', newVal)
@@ -123,20 +141,71 @@ export default {
           console.log(res);
           this.orders = res.data
         });
-    }
+    }//Vì vậy, watcher này cho phép bạn cập nhật danh sách đơn hàng mỗi khi có sự thay đổi trong bộ lọc đơn hàng. Điều này rất hữu ích khi bạn 
+//muốn danh sách đơn hàng phản ánh các bộ lọc mà người dùng đã chọn.
   },
-  created() {
-    this.orderStatus = ref([]);
-    this.orderStatusOption = ref([]);
-    Object.keys(OrderStatus).forEach((os, index) => {
-      this.orderStatus.push(OrderStatus[os])
+
+  created() {//Đây là một lifecycle hook của Vue.js, được gọi sau khi instance được tạo nhưng trước khi nó được gắn vào DOM. Trong trường hợp này,
+//nó được sử dụng để khởi tạo orderStatus và orderStatusOption dựa trên OrderStatus.
+    this.orderStatus = ref([]);//Đầu tiên, orderStatus và orderStatusOption được khởi tạo như là một mảng rỗng.
+    this.orderStatusOption = ref([]);//Đầu tiên, orderStatus và orderStatusOption được khởi tạo như là một mảng rỗng.
+    Object.keys(OrderStatus).forEach((os, index) => {//Sau đó, phương thức này duyệt qua tất cả các key của OrderStatus.
+      this.orderStatus.push(OrderStatus[os])//Mỗi key của OrderStatus được thêm vào orderStatus.
       this.orderStatusOption.push({
         label: OrderStatus[os].name.toString(),
         value: os,
-      })
+      })//Đối với mỗi key, một đối tượng với label là tên của trạng thái đơn hàng và value là key được thêm vào orderStatusOption.
     });
-  }
+  }//Vì vậy, sau khi created() được gọi, orderStatus và orderStatusOption sẽ chứa thông tin về tất cả các trạng thái đơn hàng có sẵn.
 };
+//<main class="container">: Đây là thẻ chính chứa tất cả các thành phần khác.
+//<div class="is-ancestor">: Đây là một thẻ chứa các thành phần con.
+//<div class="filters">: Đây là một thẻ chứa các bộ lọc.
+//<div class="suggest-wrapper" ref="suggestUser">: Đây là một thẻ chứa các gợi ý người dùng.
+//<div id="suggests">: Đây là một thẻ chứa các gợi ý.
+
+//<div class="suggest-item" v-for="(user, ind) in userSuggest" @click="getSuggest" :data-id="user._id">: Đây là một thẻ chứa các mục gợi ý. 
+//Nó sử dụng vòng lặp v-for để lặp qua mỗi người dùng trong userSuggest và gán sự kiện click vào hàm getSuggest.
+
+//<div class="filter-item" @click="orderStatusFilter" v-for="item in orderStatus" :data-query="JSON.stringify(item.query)">{{item.label }}</div>:
+//Đây là một thẻ chứa các mục bộ lọc. Nó sử dụng vòng lặp v-for để lặp qua mỗi mục trong orderStatus và gán sự kiện click vào hàm 
+//orderStatusFilter.
+
+//<div class="is-parent" v-if="orders.length > 0">: Đây là một thẻ chứa các đơn hàng. Nó chỉ hiển thị nếu có ít nhất một đơn hàng.
+
+//<div class="card" v-for="(item, index) in orders" @click="getDetail" :data-index="index">: Đây là một thẻ chứa thông tin chi tiết về mỗi đơn
+//hàng. Nó sử dụng vòng lặp v-for để lặp qua mỗi đơn hàng trong orders và gán sự kiện click vào hàm getDetail.
+
+//<Teleport to="body">: Đây là một thẻ Teleport trong Vue.js, cho phép di chuyển một thành phần đến một nơi khác trong DOM. Trong trường hợp này,
+//nó đang di chuyển cửa sổ modal đến thẻ body của trang.
+
+//<Modal width="800px" ref="detailModal">: Đây là một thẻ Modal, tạo ra một cửa sổ modal với chiều rộng 800px. ref="detailModal" cho phép tham 
+//chiếu đến cửa sổ modal này trong các phương thức và thuộc tính khác của Vue.js.
+
+//<template #header> và <template #body>: Đây là các slots trong Vue.js, cho phép chèn nội dung vào các phần cụ thể của một thành phần. Trong 
+//trường hợp này, chúng đang được sử dụng để chèn tiêu đề và nội dung vào cửa sổ modal.
+
+//<div class="order-item" v-for="orderItem in currentOrderDetail.list">: Đây là một thẻ chứa thông tin về mỗi mặt hàng trong đơn hàng. Nó sử
+//dụng vòng lặp v-for để lặp qua mỗi mặt hàng trong currentOrderDetail.list.
+
+//<div class="order-card footer">: Đây là một thẻ chứa thông tin về tổng tiền hàng và tổng đơn hàng. Nó hiển thị tổng tiền hàng và tổng đơn hàng
+//(bao gồm phí vận chuyển) của đơn hàng hiện tại.
+
+//<button style="background-color: var(--primary-color); color: #fff;" @click="$refs.processOrderModal.show()">Xử lý đơn hàng</button>: Đây là
+//một nút cho phép người dùng mở cửa sổ modal để xử lý đơn hàng. Khi nút này được nhấn, hàm show() của processOrderModal sẽ được gọi.
+
+//<button @click="$refs.detailModal.hide()">Thoát</button>: Đây là một nút cho phép người dùng đóng cửa sổ modal hiển thị chi tiết đơn hàng. 
+//Khi nút này được nhấn, hàm hide() của detailModal sẽ được gọi.
+
+//<Modal width="400px" ref="processOrderModal">: Đây là một cửa sổ modal cho phép người dùng xử lý đơn hàng. Nó chứa một danh sách các trạng thái
+//đơn hàng mà người dùng có thể chọn để cập nhật trạng thái của đơn hàng.
+
+//<InputTypeSelect :options="orderStatus" @changed="saveNewOrderStatus" style="min-width:100% !important;margin-left: auto;margin-right:auto; 
+//box-shadow: 0 0 5px #888;">: Đây là một thẻ chọn cho phép người dùng chọn trạng thái mới cho đơn hàng. Khi trạng thái được thay đổi, 
+//hàm saveNewOrderStatus sẽ được gọi.
+
+//<button @click="processOrder" style="background-color: var(--primary-color); color:#fff">Xử lý</button>: Đây là một nút cho phép người dùng xử
+//lý đơn hàng. Khi nút này được nhấn, hàm processOrder sẽ được gọi.
 </script>
 <template>
   <main class="container">
@@ -153,8 +222,7 @@ export default {
         </div>
         
         <div class="filter-item" @click="orderStatusFilter" v-for="item in orderStatus"
-          :data-query="JSON.stringify(item.query)">{{
-            item.label }}</div>
+          :data-query="JSON.stringify(item.query)">{{item.label }}</div>
 
       </div>
       <transition name="fade" mode="out-in">
@@ -202,7 +270,6 @@ export default {
           <h4 style="text-align: center;"></h4>
         </div>
       </transition>
-
     </div>
     <Teleport to="body">
       <Modal width="800px" ref="detailModal">

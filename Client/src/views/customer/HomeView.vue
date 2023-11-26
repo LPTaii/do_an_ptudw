@@ -1,20 +1,22 @@
 <script>
-import Pills from '@/components/pills.vue';
+import Pills from '@/components/pills.vue'; //Đây là một câu lệnh import trong JavaScript, 
+//nó đang nhập một component Vue.js có tên là “Pills” từ file ‘pills.vue’ nằm trong thư mục ‘components’.
 
 export default {
-  name: "HomeView",
+  name: "HomeView", //Đây là tên của component
   
-  components: {
+  components: { //Đây là định nghĩa các component con được sử dụng trong component này. 
+//Trong trường hợp này, chỉ có một component con là “Pills”.
     Pills,
   },
   data() {
     return {
-      
       products: [],
       productImages: [],
       origin: location.origin
     }
-  },
+  }, //Đây là định nghĩa dữ liệu ban đầu của component. Có ba thuộc tính được khởi tạo:
+// products, productImages và origin.
   methods: {
     clickPill(value) {
       this.$emit('search', value);
@@ -26,8 +28,10 @@ export default {
     toPrice(value) {
       return value.toLocaleString('vi', { style: 'currency', currency: 'VND' });
     }
-  },
-  created() {
+  },// Đây là các phương thức được định nghĩa trong component. 
+//Các phương thức này có thể được gọi từ template của component hoặc từ các phương thức khác trong component.
+  created() {// Đây là một vòng đời của component Vue.js, được gọi ngay sau khi một instance của
+//component được tạo. Trong trường hợp này, nó đang gọi một action trong Vuex store để lấy các sản phẩm đề xuất.
     try {
       this.$store.dispatch('product/getRecommendedProducts')
         .then((data) => {
@@ -43,6 +47,17 @@ export default {
     }
   }
 }
+//<Pills :pills="tags" @clickPill="clickPill" />: Đây là cách sử dụng component “Pills” đã được import.
+//Thuộc tính pills của nó được đặt bằng biến tags (chưa được định nghĩa trong đoạn code bạn đưa ra), và 
+//khi có sự kiện clickPill xảy ra (được định nghĩa trong component “Pills”), nó sẽ gọi đến phương thức clickPill của component “HomeView”.
+
+//<div class="product" @click="clickProduct" v-for="product in products" :data-pid="product._id">: 
+//Đây là một vòng lặp Vue.js (v-for) tạo ra một div cho mỗi sản phẩm trong mảng products. Mỗi div này sẽ có một sự kiện click gọi đến
+//phương thức clickProduct của component “HomeView”, và một thuộc tính data-pid được đặt bằng id của sản phẩm.
+
+//{{ product.name }}, {{ toPrice(product.price) }}, {{ product.quantity }}: Đây là cách hiển thị dữ liệu của sản phẩm.
+//toPrice(product.price) sẽ gọi đến phương thức toPrice của component “HomeView” để chuyển đổi giá của sản phẩm thành định dạng tiền tệ.
+
 </script>
 <style>
 h4{

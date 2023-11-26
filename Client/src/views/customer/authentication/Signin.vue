@@ -4,11 +4,12 @@ import { Form, Field, ErrorMessage } from "vee-validate";
 
 export default {
   name: "SigninFormForCustomer",
-  components: {
+  components: { 
     Form,
     Field,
     ErrorMessage,
-  },
+  },//Đây là định nghĩa các component con được sử dụng trong component này. Trong trường hợp này, 
+//có ba component con là “Form”, “Field” và “ErrorMessage”.
   data() {
     const schema = yup.object().shape({
       phone: yup.string().required("Vui lòng nhập SĐT"),
@@ -20,13 +21,15 @@ export default {
       message: "",
       schema,
     };
-  },
+  },//Đây là định nghĩa dữ liệu ban đầu của component. Có ba thuộc tính được khởi tạo: loading, message và schema.
+//schema là một đối tượng yup được sử dụng để xác thực dữ liệu form.
   computed: {
     loggedIn() {
       return this.$store.state.userC.status.loggedIn;
     },
   },
-  created() {
+  created() {// Đây là một vòng đời của component Vue.js, được gọi ngay sau khi một instance của component được tạo. 
+//Trong trường hợp này, nó kiểm tra xem người dùng đã đăng nhập chưa, nếu đã đăng nhập thì chuyển hướng đến trang chủ.
     if (this.loggedIn) {
       this.$emit('notification', {
         message: "Signed in",
@@ -36,7 +39,8 @@ export default {
       this.$router.push(this.$route.query.redirect || "/")
     }
   },
-  methods: {
+  methods: {// Đây là các phương thức được định nghĩa trong component. Các phương thức này có thể được gọi từ template của 
+//component hoặc từ các phương thức khác trong component.
     handleLogin(user) {
       this.loading = true;
 
